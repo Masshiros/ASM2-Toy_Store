@@ -1,6 +1,28 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchProductsAction } from "../../redux/slices/products/productSlices";
+import baseURL from "../../utils/baseURL";
 
 const HomeProductTrending = () => {
+  //build up url
+  let productUrl = `${baseURL}/products`;
+  //dispatch
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(
+      fetchProductsAction({
+        url: productUrl,
+      })
+    );
+  }, [dispatch]);
+  //get data from store
+  const {
+    products: { products },
+    error,
+    loading,
+  } = useSelector((state) => state?.products);
+  console.log(products);
   const trendingProducts = [];
   return (
     <>
@@ -21,27 +43,27 @@ const HomeProductTrending = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-0 lg:gap-x-8">
-            {trendingProducts?.map((product) => (
+            {products?.map((product) => (
               <Link
-                to={`/products/${product.id}`}
+                to={`/products/${product._id}`}
                 key={product.id}
                 className="group relative">
                 <div className="h-56 w-full overflow-hidden rounded-md group-hover:opacity-75 lg:h-72 xl:h-80">
                   <img
-                    src={product.imageSrc}
-                    alt={product.imageAlt}
+                    src={product.images[0]}
+                    alt={product.images[0]}
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
                 <h3 className="mt-4 text-sm text-gray-700">
-                  <a href={product.href}>
-                    <span className="absolute inset-0" />
-                    {product.name}
-                  </a>
+                  <span className="absolute inset-0" />
+                  {product.name}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">{product.color}</p>
                 <p className="mt-1 text-sm font-medium text-gray-900">
-                  {product.price}
+                  ${product.price}.00
+                </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  {product.description}
                 </p>
               </Link>
             ))}

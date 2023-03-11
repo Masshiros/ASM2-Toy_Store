@@ -60,12 +60,14 @@ export default function Example() {
             <div className="mx-auto max-w-7xl lg:px-8">
               <ul
                 role="list"
-                className="grid grid-cols-1 divide-y divide-gray-200 lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
+                className="grid grid-cols-1 divide-y divide-gray-200 lg:grid-cols-3 lg:divide-y-0 lg:divide-x"
+              >
                 {offers.map((offer) => (
                   <li key={offer.name} className="flex flex-col">
                     <a
                       href={offer.href}
-                      className="relative flex flex-1 flex-col justify-center bg-white py-6 px-4 text-center focus:z-10">
+                      className="relative flex flex-1 flex-col justify-center bg-white py-6 px-4 text-center focus:z-10"
+                    >
                       <p className="text-sm text-gray-500">{offer.name}</p>
                       <p className="font-semibold text-gray-900">
                         {offer.description}
@@ -95,7 +97,8 @@ export default function Example() {
                     <div className="mt-6">
                       <a
                         href="#"
-                        className="inline-block rounded-md border border-transparent bg-indigo-600 py-3 px-8 font-medium text-white hover:bg-indigo-700">
+                        className="inline-block rounded-md border border-transparent bg-indigo-600 py-3 px-8 font-medium text-white hover:bg-indigo-700"
+                      >
                         Shop Productivity
                       </a>
                     </div>
@@ -117,11 +120,13 @@ export default function Example() {
           {/* Sale */}
           <section
             aria-labelledby="sale-heading"
-            className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pt-32 text-center sm:px-6 lg:px-8">
+            className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pt-32 text-center sm:px-6 lg:px-8"
+          >
             <div className="mx-auto max-w-2xl lg:max-w-none">
               <h2
                 id="sale-heading"
-                className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+                className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl"
+              >
                 Get 25% off during our one-time sale
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-xl text-gray-600">
@@ -130,7 +135,8 @@ export default function Example() {
               </p>
               <a
                 href="#"
-                className="mt-6 inline-block w-full rounded-md border border-transparent bg-gray-900 py-3 px-8 font-medium text-white hover:bg-gray-800 sm:w-auto">
+                className="mt-6 inline-block w-full rounded-md border border-transparent bg-gray-900 py-3 px-8 font-medium text-white hover:bg-gray-800 sm:w-auto"
+              >
                 Get access to our one-time sale
               </a>
             </div>
@@ -141,16 +147,19 @@ export default function Example() {
         {/* Category section */}
         <section
           aria-labelledby="category-heading"
-          className="pt-24 sm:pt-32 xl:mx-auto xl:max-w-7xl xl:px-8">
+          className="pt-24 sm:pt-32 xl:mx-auto xl:max-w-7xl xl:px-8"
+        >
           <div className="px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 xl:px-0">
             <h2
               id="category-heading"
-              className="text-2xl font-bold tracking-tight text-gray-900">
+              className="text-2xl font-bold tracking-tight text-gray-900"
+            >
               Shop by Category
             </h2>
             <Link
               to="/all-categories"
-              className="hidden text-sm font-semibold text-indigo-600 hover:text-indigo-500 sm:block">
+              className="hidden text-sm font-semibold text-indigo-600 hover:text-indigo-500 sm:block"
+            >
               Browse all categories
               <span aria-hidden="true"> &rarr;</span>
             </Link>
@@ -164,7 +173,8 @@ export default function Example() {
         {/* info */}
         <section
           aria-labelledby="perks-heading"
-          className="border-t border-gray-200 bg-gray-50">
+          className="border-t border-gray-200 bg-gray-50"
+        >
           <h2 id="perks-heading" className="sr-only">
             Our perks
           </h2>
@@ -174,7 +184,8 @@ export default function Example() {
               {perks.map((perk) => (
                 <div
                   key={perk.name}
-                  className="text-center md:flex md:items-start md:text-left lg:block lg:text-center">
+                  className="text-center md:flex md:items-start md:text-left lg:block lg:text-center"
+                >
                   <div className="md:flex-shrink-0">
                     <div className="flow-root">
                       <img

@@ -1,12 +1,22 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { updateOrderAction } from "../../../redux/slices/orders/ordersSlices";
 
-const UpdateOrders = ({ id }) => {
+const UpdateOrders = () => {
+  //get the id from params
+  const { id } = useParams();
+  //dispatch
+  const dispatch = useDispatch();
   const [order, setOrder] = React.useState({
     status: "pending",
   });
 
-  const onChange = (e) => {};
+  const onChange = (e) => {
+    dispatch(updateOrderAction({ status: e.target.value, id }));
+    //redirect
+    window.location.href = "/admin";
+  };
 
   return (
     <div className="mt-6 flex items-center space-x-4 divide-x divide-gray-200 border-t border-gray-200 pt-4 text-sm font-medium sm:mt-0 sm:ml-4 sm:border-none sm:pt-0">

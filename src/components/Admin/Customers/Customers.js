@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchOrdersAction } from "../../../redux/slices/orders/ordersSlices";
+
 const people = [
   {
     name: "Lindsay Walton",
@@ -9,6 +13,18 @@ const people = [
 ];
 
 export default function Customers() {
+  //dispatch
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchOrdersAction());
+  }, [dispatch]);
+  //get data from store
+  const {
+    error,
+    loading,
+    orders: { orders },
+  } = useSelector((state) => state?.orders);
+  console.log(orders);
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">

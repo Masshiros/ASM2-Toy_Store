@@ -4,8 +4,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 import SuccessMsg from "../../SuccessMsg/SuccessMsg";
+import { createCouponAction } from "../../../redux/slices/coupons/couponsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function AddCoupon() {
+  //dispatch
+  const dispatch = useDispatch();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
@@ -21,7 +25,14 @@ export default function AddCoupon() {
   //---onHandleSubmit---
   const onHandleSubmit = (e) => {
     e.preventDefault();
-
+    dispatch(
+      createCouponAction({
+        discount: formData?.discount,
+        code: formData?.code,
+        startDate,
+        endDate,
+      })
+    );
     //reset form
     setFormData({
       code: "",
@@ -29,7 +40,10 @@ export default function AddCoupon() {
     });
   };
   //---coupon from store---
-  const { loading, isAdded, error } = {};
+  const { loading, isAdded, error, coupon } = useSelector(
+    (state) => state?.coupons
+  );
+  console.log(loading, isAdded, error, coupon);
   return (
     <>
       {error && <ErrorMsg message={error?.message} />}

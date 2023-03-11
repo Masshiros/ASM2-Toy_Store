@@ -7,7 +7,8 @@ const NoDataFound = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-      }}>
+      }}
+    >
       <h1 className="text-xl">No Data Found</h1>
     </div>
   );
