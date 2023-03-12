@@ -1,31 +1,14 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchProductsAction } from "../../../redux/slices/products/productSlices";
-import baseURL from "../../../utils/baseURL";
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import NoDataFound from "../../NoDataFound/NoDataFound";
 
 export default function ManageStocks() {
+  //Selector
+  let products, loading, error;
+
   //delete product handler
   const deleteProductHandler = (id) => {};
-  let productUrl = `${baseURL}/products`;
-  //dispatch
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(
-      fetchProductsAction({
-        url: productUrl,
-      })
-    );
-  }, [dispatch]);
-  //get data from store
-  const {
-    products: { products },
-    loading,
-    error,
-  } = useSelector((state) => state?.products);
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
@@ -113,7 +96,7 @@ export default function ManageStocks() {
                             <div className="h-10 w-10 flex-shrink-0">
                               <img
                                 className="h-10 w-10 rounded-full"
-                                src={product?.images[0]}
+                                src={product?.image}
                                 alt={product?.name}
                               />
                             </div>
@@ -131,9 +114,12 @@ export default function ManageStocks() {
                           <div className="text-gray-900">
                             {product?.category}
                           </div>
+                          <div className="text-gray-500">
+                            {product.department}
+                          </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {product?.qtyLeft < 0 ? (
+                          {product?.isOutOfStock ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                               Out of Stock
                             </span>

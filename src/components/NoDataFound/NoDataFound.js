@@ -9,7 +9,7 @@ const NoDataFound = () => {
         alignItems: "center",
       }}
     >
-      <h1 className="text-xl">No Data Found</h1>
+      <h1 className="text-xl">No Data Found.</h1>
     </div>
   );
 };

@@ -6,60 +6,18 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  changeOrderItemQty,
-  getCartItemsFromLocalStorageAction,
-  removeOrderItemQty,
-} from "../../../redux/slices/cart/cartSlices";
-import { fetchCouponAction } from "../../../redux/slices/coupons/couponsSlice";
-import LoadingComponent from "../../LoadingComp/LoadingComponent";
-import ErrorMsg from "../../ErrorMsg/ErrorMsg";
-import SuccessMsg from "../../SuccessMsg/SuccessMsg";
 
 export default function ShoppingCart() {
-  //dispatch
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getCartItemsFromLocalStorageAction());
-  }, [dispatch]);
-  //coupon state
-  const [couponCode, setCouponCode] = useState(null);
-  const applyCouponSubmit = (e) => {
-    e.preventDefault();
-    dispatch(fetchCouponAction(couponCode));
-    setCouponCode("");
-  };
-
-  //get coupon  from store
-  const { coupon, loading, error, isAdded } = useSelector(
-    (state) => state?.coupons
-  );
-  //get cart items from store
-  const { cartItems } = useSelector((state) => state?.carts);
-  //add to cart handler
-  const changeOrderItemQtyHandler = (productId, qty) => {
-    dispatch(changeOrderItemQty({ productId, qty }));
-    dispatch(getCartItemsFromLocalStorageAction());
-  };
-  console.log(cartItems);
-  //calculate total price
-  let sumTotalPrice = 0;
-  sumTotalPrice = cartItems?.reduce((acc, current) => {
-    return acc + current?.totalPrice;
-  }, 0);
-
-  //check if coupon found
-  if (coupon) {
-    sumTotalPrice =
-      sumTotalPrice - (sumTotalPrice * coupon?.coupon?.discount) / 100;
-  }
-  //price of the product - (price of product x discount/100)
-  //remove cart  Item handler
-  const removeOrderItemQtyHandler = (productId) => {
-    dispatch(removeOrderItemQty(productId));
-    dispatch(getCartItemsFromLocalStorageAction());
-  };
+  let cartItems;
+  let changeOrderItemQtyHandler;
+  let removeOrderItemFromLocalStorageHandler;
+  let calculateTotalDiscountedPrice;
+  let error;
+  let couponFound;
+  let applyCouponSubmit;
+  let setCoupon;
+  let loading;
+  let coupon;
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 pt-16 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -79,8 +37,8 @@ export default function ShoppingCart() {
                 <li key={product._id} className="flex py-6 sm:py-10">
                   <div className="flex-shrink-0">
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={product.imageSrc}
+                      alt={product.imageAlt}
                       className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
                     />
                   </div>
@@ -90,21 +48,23 @@ export default function ShoppingCart() {
                       <div>
                         <div className="flex justify-between">
                           <h3 className="text-sm">
-                            <p className="font-medium text-gray-700 hover:text-gray-800">
+                            <a
+                              href={product.href}
+                              className="font-medium text-gray-700 hover:text-gray-800">
                               {product.name}
-                            </p>
+                            </a>
                           </h3>
                         </div>
                         <div className="mt-1 flex text-sm">
                           <p className="text-gray-500">{product.color}</p>
-
-                          <p className="ml-4 border-l border-gray-200 pl-4 text-gray-500">
-                            {product.size}
-                          </p>
+                          {product.size ? (
+                            <p className="ml-4 border-l border-gray-200 pl-4 text-gray-500">
+                              {product.size}
+                            </p>
+                          ) : null}
                         </div>
                         <p className="mt-1 text-sm font-medium text-gray-900">
-                          ${product?.price} x {product?.qty} = $
-                          {product?.totalPrice}
+                          $ {product.discountedPrice} X {product.qty}
                         </p>
                       </div>
 
@@ -115,26 +75,26 @@ export default function ShoppingCart() {
                         <select
                           onChange={(e) =>
                             changeOrderItemQtyHandler(
-                              product?._id,
+                              product?.productID,
                               e.target.value
                             )
                           }
                           className="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                           {/* use the qty  */}
 
-                          {[...Array(product?.qtyLeft)?.keys()]?.map((x) => {
-                            return (
-                              <option key={x} value={x + 1}>
-                                {x + 1}
-                              </option>
-                            );
-                          })}
+                          {[...Array(product?.qtyLeft).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
                         </select>
                         {/* remove */}
                         <div className="absolute top-0 right-0">
                           <button
                             onClick={() =>
-                              removeOrderItemQtyHandler(product?._id)
+                              removeOrderItemFromLocalStorageHandler(
+                                product?._id
+                              )
                             }
                             className="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500">
                             <span className="sr-only">Remove</span>
@@ -163,7 +123,7 @@ export default function ShoppingCart() {
               <div className="flex items-center justify-between">
                 <dt className="text-sm text-gray-600">Subtotal</dt>
                 <dd className="text-sm font-medium text-gray-900">
-                  $ {sumTotalPrice}.00
+                  $ {calculateTotalDiscountedPrice().toFixed(2)}
                 </dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4"></div>
@@ -172,26 +132,30 @@ export default function ShoppingCart() {
                 <span>Have coupon code? </span>
               </dt>
               {/* errr */}
-              {error && <ErrorMsg message={error?.message} />}
-              {isAdded && (
-                <SuccessMsg
-                  message={`Congratulation you got ${coupon?.coupon?.discount} %`}
-                />
-              )}
+              {error && <span className="text-red-500">{error?.message}</span>}
               {/* success */}
-
+              {couponFound?.status === "success" && !error && (
+                <span className="text-green-800">
+                  Congrats! You have got{" "}
+                  {couponFound?.coupon?.discountInPercentage} % discount
+                </span>
+              )}
               <form onSubmit={applyCouponSubmit}>
                 <div className="mt-1">
                   <input
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
+                    value={coupon}
+                    onChange={(e) => setCoupon(e.target.value)}
                     type="text"
                     className="block w-full rounded-md border p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    placeholder="Enter Coupon Code"
+                    placeholder="you@example.com"
                   />
                 </div>
                 {loading ? (
-                  <LoadingComponent />
+                  <button
+                    disabled
+                    className="inline-flex  text-center mt-4 items-center rounded border border-transparent bg-gray-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Loading Please Wait...
+                  </button>
                 ) : (
                   <button className="inline-flex  text-center mt-4 items-center rounded border border-transparent bg-green-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     Apply coupon
@@ -204,7 +168,7 @@ export default function ShoppingCart() {
                   Order total
                 </dt>
                 <dd className=" text-xl font-medium text-gray-900">
-                  $ {sumTotalPrice}
+                  $ {calculateTotalDiscountedPrice().toFixed(2)}
                 </dd>
               </div>
             </dl>
@@ -212,9 +176,8 @@ export default function ShoppingCart() {
             <div className="mt-6">
               <Link
                 //  pass data to checkout page
-                to="/order-payment"
-                state={{
-                  sumTotalPrice,
+                to={{
+                  pathname: "/order-payment",
                 }}
                 className="w-full rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50">
                 Proceed to Checkout

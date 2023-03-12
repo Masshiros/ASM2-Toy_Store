@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 export default function CategoryToAdd() {
-  let handleCategory;
+  let handleCategory, handleBrand, handleColor, isCategory, isBrand, isColor;
 
   return (
     <>
@@ -21,7 +21,13 @@ export default function CategoryToAdd() {
             />
           </svg>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Select Option
+            {isCategory
+              ? "Add Product Category"
+              : isBrand
+              ? "Add Product Brand"
+              : isColor
+              ? " Add Product Color"
+              : "Select Option"}
           </h2>
         </div>
 
@@ -36,12 +42,23 @@ export default function CategoryToAdd() {
                 </label>
                 <div className="mt-1">
                   <input
-                    disabled
+                    disabled={isCategory || isBrand || isColor ? false : true}
                     className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
               </div>
-              <div></div>
+              <div>
+                <button
+                  disabled={isCategory || isBrand || isColor ? false : true}
+                  type="submit"
+                  className={
+                    isCategory || isBrand || isColor
+                      ? "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      : "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 "
+                  }>
+                  Add Item
+                </button>
+              </div>
             </form>
 
             <div className="mt-6">
@@ -57,6 +74,7 @@ export default function CategoryToAdd() {
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <div>
                   <Link
+                    onClick={handleBrand}
                     to="/admin/add-brand"
                     className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
                     Add Brand
@@ -66,6 +84,7 @@ export default function CategoryToAdd() {
                 <div>
                   <div>
                     <Link
+                      onClick={handleColor}
                       to="/admin/add-color"
                       className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
                       Add Color
@@ -76,6 +95,7 @@ export default function CategoryToAdd() {
                 <div>
                   <div>
                     <Link
+                      onClick={handleCategory}
                       to="/admin/add-category"
                       className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
                       Add Category
