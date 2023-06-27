@@ -1,6 +1,9 @@
 import axios from "axios";
 import baseURL from "../../../utils/baseURL.js";
-import { resetErrAction,resetSuccessAction } from "../globalActions/globalActions.js";
+import {
+  resetErrAction,
+  resetSuccessAction,
+} from "../globalActions/globalActions.js";
 const { createAsyncThunk, createSlice } = require("@reduxjs/toolkit");
 
 // initials State
@@ -37,7 +40,7 @@ export const createProductAction = createAsyncThunk(
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
         },
       };
       // formdata
@@ -51,13 +54,13 @@ export const createProductAction = createAsyncThunk(
       formData.append("price", price);
       formData.append("totalQty", totalQty);
       ages.forEach((age) => {
-        formData.append("ages",age);
+        formData.append("ages", age);
       });
       colors.forEach((color) => {
         formData.append("colors", color);
       });
       files.forEach((file) => {
-        formData.append("files",file);
+        formData.append("files", file);
       });
 
       const { data } = await axios.post(`${baseURL}/toys`, formData, config);
@@ -111,7 +114,7 @@ export const updateProductAction = createAsyncThunk(
     }
   }
 );
-// fetch 
+// fetch
 //fetch products action
 export const fetchProductsAction = createAsyncThunk(
   "product/list",
@@ -144,10 +147,7 @@ export const fetchProductAction = createAsyncThunk(
         },
       };
 
-      const { data } = await axios.get(
-        `${baseURL}/toys/${productId}`,
-        config
-      );
+      const { data } = await axios.get(`${baseURL}/toys/${productId}`, config);
       return data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -161,13 +161,14 @@ const productSlice = createSlice({
     // create
     builder.addCase(createProductAction.pending, (state) => {
       state.loading = true;
+      state.isAdded = false;
     });
     builder.addCase(createProductAction.fulfilled, (state, action) => {
       state.loading = false;
       state.product = action.payload;
       state.isAdded = true;
     });
-   
+
     builder.addCase(createProductAction.rejected, (state, action) => {
       state.loading = false;
       state.product = null;
@@ -196,38 +197,37 @@ const productSlice = createSlice({
     builder.addCase(fetchProductsAction.fulfilled, (state, action) => {
       state.loading = false;
       state.products = action.payload;
-   
     });
-   
+
     builder.addCase(fetchProductsAction.rejected, (state, action) => {
       state.loading = false;
       state.products = null;
 
       state.error = action.payload;
     });
-      //fetch all
-      builder.addCase(fetchProductAction.pending, (state) => {
-        state.loading = true;
-      });
-      builder.addCase(fetchProductAction.fulfilled, (state, action) => {
-        state.loading = false;
-        state.product = action.payload;
-        state.isAdded = true;
-      });
-      builder.addCase(fetchProductAction.rejected, (state, action) => {
-        state.loading = false;
-        state.product = null;
-        state.isAdded = false;
-        state.error = action.payload;
-      });
-     // reset success
-     builder.addCase(resetSuccessAction.pending,(state,action)=>{
+    //fetch all
+    builder.addCase(fetchProductAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchProductAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.product = action.payload;
+      state.isAdded = true;
+    });
+    builder.addCase(fetchProductAction.rejected, (state, action) => {
+      state.loading = false;
+      state.product = null;
       state.isAdded = false;
-    })
-     // reset error
-     builder.addCase(resetErrAction.pending,(state,action)=>{
-      state.error = null
-    })
+      state.error = action.payload;
+    });
+    // reset success
+    builder.addCase(resetSuccessAction.pending, (state, action) => {
+      state.isAdded = false;
+    });
+    // reset error
+    builder.addCase(resetErrAction.pending, (state, action) => {
+      state.error = null;
+    });
   },
 });
 // reducer
