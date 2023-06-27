@@ -31,6 +31,9 @@ import ManageOrders from "./components/Admin/Orders/ManageOrders";
 import Customers from "./components/Admin/Orders/Customers";
 import BrandsColorsList from "./components/Admin/Categories/BrandsColorsList";
 
+import AuthRoute from "./components/AuthRoute/AuthRoute.js";
+import AdminRoutes from "./components/AuthRoute/AdminRoutes";
+import ProductUpdate from "./components/Admin/Products/ProductUpdate";
 const App = () => {
   return (
     <BrowserRouter>
@@ -38,11 +41,19 @@ const App = () => {
       {/* hide navbar if admin */}
       <Routes>
         {/* nested route */}
-        <Route path="admin" element={<AdminDashboard />}>
-          {/* products */} <Route path="" element={<OrdersList />} />
+        <Route
+          path="admin"
+          element={
+            <AdminRoutes>
+              <AdminDashboard />
+            </AdminRoutes>
+          }
+        >
+          {/* products */}
+          <Route path="" element={<OrdersList />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="manage-products" element={<ManageStocks />} />
-          <Route path="products/edit/:id" element={<UpdateProduct />} />
+          <Route path="products/edit/:id" element={<ProductUpdate />} />
           {/* coupons */}
           <Route path="add-coupon" element={<AddCoupon />} />
           <Route path="manage-coupon" element={<ManageCoupons />} />

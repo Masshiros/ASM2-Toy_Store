@@ -1,8 +1,19 @@
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchCategoryAction } from "../../redux/slices/categories/categoriesSlice";
 
 const HomeCategories = () => {
-  const categoriesToShow = [];
+  //dispatch
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchCategoryAction());
+  }, [dispatch]);
+
+  //get data from store
+  const { categories } = useSelector((state) => state?.categories);
+
+  const categoriesToShow = categories?.categories?.slice(0, 5);
 
   return (
     <>
@@ -27,7 +38,7 @@ const HomeCategories = () => {
                     className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-gray-800 opacity-50"
                   />
                   <span className="relative mt-auto text-center text-xl font-bold text-white">
-                    {category.name} ({category.products.length})
+                    {category.name} ({category.toys.length})
                   </span>
                 </Link>
               ))}
