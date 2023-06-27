@@ -196,13 +196,13 @@ const productSlice = createSlice({
     builder.addCase(fetchProductsAction.fulfilled, (state, action) => {
       state.loading = false;
       state.products = action.payload;
-      state.isAdded = true;
+   
     });
    
     builder.addCase(fetchProductsAction.rejected, (state, action) => {
       state.loading = false;
       state.products = null;
-      state.isAdded = false;
+
       state.error = action.payload;
     });
       //fetch all
